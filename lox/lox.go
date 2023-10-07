@@ -3,22 +3,11 @@ package lox
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 )
 
 type Lox struct {
 	HasError bool
-}
-
-func (l *Lox) Main(args []string) {
-	if len(args) > 1 {
-		log.Fatal("usage: glox [script]")
-	} else if len(args) == 1 {
-		l.RunFile(args[0])
-	} else {
-		l.RunPrompt()
-	}
 }
 
 func (l *Lox) RunFile(filePath string) error {
