@@ -25,7 +25,18 @@ func (l *Lox) RunFile(filePath string) error {
 }
 
 func (l *Lox) Run(b []byte) error {
-	fmt.Println(string(b))
+	s := NewScanner(string(b))
+	tokens, err := s.ScanTokens()
+	if err != nil {
+		return fmt.Errorf("failed to ScanToken: %w", err)
+	}
+
+	// TODO: Implement
+	// とりあえず表示だけする
+	for _, token := range tokens {
+		fmt.Printf("%#+v\n", token)
+	}
+
 	return nil
 }
 
