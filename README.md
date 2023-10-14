@@ -5,3 +5,11 @@
 ```
 go run ./glox/... --help
 ```
+
+## Mutation Testing
+
+e.g.
+
+```
+go run github.com/avito-tech/go-mutesting/... lox/scanner.go
+```
