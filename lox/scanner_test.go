@@ -36,6 +36,12 @@ func Test_Scanner(t *testing.T) {
 			{Type: StringTokenType, Lexeme: `"hello world"`, Literal: "hello world"},
 			{Type: EOFTokenType},
 		}},
+		{
+			"数値リテラル", "1234", false, []Token{
+				{Type: NumberTokenType, Lexeme: "1234", Literal: float64(1234)},
+				{Type: EOFTokenType},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -44,10 +50,32 @@ func Test_Scanner(t *testing.T) {
 		if testCase.wantError && err == nil {
 			t.Fatal("This test case expect error, but err is nil.")
 		} else if !testCase.wantError && err != nil {
-			t.Fatal("This test case don't expected error, but err is not nil.")
+			t.Fatal("This test case don't expected error, but err is not nil: ", err)
 		}
 		if diff := cmp.Diff(testCase.want, got); diff != "" {
 			t.Fatal(diff)
 		}
+	}
+}
+
+func Test_isDigit(t *testing.T) {
+	type args struct {
+		c rune
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{"a", args{'a'}, false},
+		{"0", args{'0'}, true},
+		{"1", args{'1'}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isDigit(tt.args.c); got != tt.want {
+				t.Errorf("isDigit() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

@@ -3,6 +3,7 @@ package lox
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type Scanner struct {
@@ -26,6 +27,10 @@ func NewScanner(
 
 func (s *Scanner) isAtEnd() bool {
 	return s.Current >= len(s.Source)
+}
+
+func (s *Scanner) hasNext() bool {
+	return s.Current < len(s.Source)
 }
 
 func (s *Scanner) ScanTokens() ([]Token, error) {
@@ -106,12 +111,42 @@ func (s *Scanner) ScanToken() error {
 	case '"':
 		s.string()
 	default:
+		if isDigit(c) {
+			s.number()
+			break
+		}
 		// 字句エラー
 		// 本では Lox.error を呼んでいるが、依存関係がおかしい気がするので一旦エラーログを雑に吐く
 		fmt.Printf("Unexpected character: %d\n", s.Line)
 		return fmt.Errorf("unexpected character: %d", s.Line)
 	}
 	return nil
+}
+
+func (s *Scanner) number() {
+	for isDigit(s.peek()) {
+		s.advance()
+	}
+
+	// 小数部があるか確認
+	if s.peek() == '.' && isDigit(s.peekNext()) {
+		// 小数点を消費
+		s.advance()
+
+		for isDigit(s.peek()) {
+			s.advance()
+		}
+	}
+
+	literal, err := strconv.ParseFloat(string(s.Source[s.Start:s.Current]), 64)
+	if err != nil {
+		panic("Failed to strconv.ParseFloat") // TODO: Don't panic.
+	}
+	s.addToken(NumberTokenType, literal)
+}
+
+func isDigit(c rune) bool {
+	return c >= '0' && c <= '9'
 }
 
 func (s *Scanner) string() {
@@ -141,6 +176,14 @@ func (s *Scanner) peek() rune {
 		return rune(0)
 	}
 	return rune(s.Source[s.Current])
+}
+
+func (s *Scanner) peekNext() rune {
+	if s.hasNext() {
+		// TODO: '\0' のかわりに使ったが、あってる?
+		return rune(0)
+	}
+	return rune(s.Source[s.Current+1])
 }
 
 // 条件付き advance
