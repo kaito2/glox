@@ -53,6 +53,8 @@ const (
 
 	// その他
 	EOFTokenType TokenType = "eof"
+
+	UnknownTokenType TokenType = "unknown"
 )
 
 type Token struct {

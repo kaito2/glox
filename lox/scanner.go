@@ -114,6 +114,9 @@ func (s *Scanner) ScanToken() error {
 		if isDigit(c) {
 			s.number()
 			break
+		} else if isAlpha(c) {
+			s.identifier()
+			break
 		}
 		// 字句エラー
 		// 本では Lox.error を呼んでいるが、依存関係がおかしい気がするので一旦エラーログを雑に吐く
@@ -121,6 +124,66 @@ func (s *Scanner) ScanToken() error {
 		return fmt.Errorf("unexpected character: %d", s.Line)
 	}
 	return nil
+}
+
+func (s *Scanner) identifier() {
+	for isAlphaNumeric(s.peek()) {
+		s.advance()
+	}
+
+	text := s.Source[s.Start:s.Current]
+	tokenType, ok := keywordType(text)
+	if !ok {
+		tokenType = IdentifierTokenType
+	}
+	s.addTokenWithType(tokenType)
+}
+
+func keywordType(text string) (TokenType, bool) {
+	switch text {
+	case "and":
+		return AndTokenType, true
+	case "class":
+		return ClassTokenType, true
+	case "else":
+		return ElseTokenType, true
+	case "false":
+		return FalseTokenType, true
+	case "for":
+		return ForTokenType, true
+	case "fun":
+		return FunTokenType, true
+	case "if":
+		return IfTokenType, true
+	case "nil":
+		return NilTokenType, true
+	case "or":
+		return OrTokenType, true
+	case "print":
+		return PrintTokenType, true
+	case "return":
+		return ReturnTokenType, true
+	case "super":
+		return SuperTokenType, true
+	case "this":
+		return ThisTokenType, true
+	case "true":
+		return TrueTokenType, true
+	case "var":
+		return VarTokenType, true
+	case "while":
+		return WhileTokenType, true
+	default:
+		return UnknownTokenType, false
+	}
+}
+
+func isAlphaNumeric(c rune) bool {
+	return isDigit(c) || isAlpha(c)
+}
+
+func isAlpha(c rune) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
 }
 
 func (s *Scanner) number() {

@@ -48,6 +48,24 @@ func Test_Scanner(t *testing.T) {
 				{Type: EOFTokenType},
 			},
 		},
+		{
+			"予約語(or)", "or", false, []Token{
+				{Type: OrTokenType, Lexeme: "or", Literal: nil},
+				{Type: EOFTokenType},
+			},
+		},
+		{
+			"予約語(class)", "class", false, []Token{
+				{Type: ClassTokenType, Lexeme: "class", Literal: nil},
+				{Type: EOFTokenType},
+			},
+		},
+		{
+			"識別子(orange)", "orange", false, []Token{
+				{Type: IdentifierTokenType, Lexeme: "orange", Literal: nil},
+				{Type: EOFTokenType},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
