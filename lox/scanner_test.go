@@ -42,6 +42,12 @@ func Test_Scanner(t *testing.T) {
 				{Type: EOFTokenType},
 			},
 		},
+		{
+			"数値リテラル小数点以下あり", "12.34", false, []Token{
+				{Type: NumberTokenType, Lexeme: "12.34", Literal: float64(12.34)},
+				{Type: EOFTokenType},
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -68,6 +74,7 @@ func Test_isDigit(t *testing.T) {
 		want bool
 	}{
 		{"a", args{'a'}, false},
+		{"dot", args{'.'}, false},
 		{"0", args{'0'}, true},
 		{"1", args{'1'}, true},
 	}

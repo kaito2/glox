@@ -132,7 +132,6 @@ func (s *Scanner) number() {
 	if s.peek() == '.' && isDigit(s.peekNext()) {
 		// 小数点を消費
 		s.advance()
-
 		for isDigit(s.peek()) {
 			s.advance()
 		}
@@ -179,7 +178,7 @@ func (s *Scanner) peek() rune {
 }
 
 func (s *Scanner) peekNext() rune {
-	if s.hasNext() {
+	if s.Current+1 >= len(s.Source) {
 		// TODO: '\0' のかわりに使ったが、あってる?
 		return rune(0)
 	}
